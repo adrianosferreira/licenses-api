@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Service;
+namespace App\Http\Response;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;

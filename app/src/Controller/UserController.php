@@ -3,10 +3,9 @@
 namespace App\Controller;
 
 use App\Entity\User;
-use App\Service\ApiResponse;
+use App\Http\Response\ApiResponse;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -33,7 +32,7 @@ class UserController extends AbstractController {
 		$entityManager = $this->getDoctrine()->getManager();
 
 		if ( ! $request->get( 'name' ) ) {
-			return new JsonResponse( [ 'error' => 'Name is required' ] );
+			return $this->response->send( '', [], [ 'name' => 'Name is required' ], 500 );
 		}
 
 		$user = new User();
@@ -68,6 +67,23 @@ class UserController extends AbstractController {
 		}
 
 		return $this->response->send( '', $user );
+	}
+
+	/**
+	 * @Route("/user/{id}/licenses", name="user_licenses_show", methods={"GET"}, requirements={"id"="\d+"})
+	 *
+	 * @param $id
+	 *
+	 * @return Response
+	 */
+	public function show_licenses( $id ): Response {
+		$user = $this->getUserRepository()->find( $id );
+
+		if ( ! $user ) {
+			return $this->response->send( sprintf( 'User %d not found', $user->getId() ) );
+		}
+
+		return $this->response->send( '', $user->getLicenses() );
 	}
 
 	/**

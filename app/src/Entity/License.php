@@ -16,7 +16,7 @@ class License {
 	private $id;
 
 	/**
-	 * @ORM\ManyToOne(targetEntity="App\Entity\User")
+	 * @ORM\ManyToOne(targetEntity="App\Entity\User", inversedBy="licenses" )
 	 */
 	private $user;
 
@@ -29,6 +29,11 @@ class License {
 	 * @ORM\Column(type="integer")
 	 */
 	private $status;
+
+	/**
+	 * @ORM\Column(type="string", length=150)
+	 */
+	private $license_key;
 
 	public function getId(): ?int {
 		return $this->id;
@@ -60,6 +65,16 @@ class License {
 
 	public function setStatus( int $status ): self {
 		$this->status = $status;
+
+		return $this;
+	}
+
+	public function getLicenseKey(): ?string {
+		return $this->license_key;
+	}
+
+	public function setLicenseKey( string $license_key ): self {
+		$this->license_key = $license_key;
 
 		return $this;
 	}
