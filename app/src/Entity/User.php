@@ -5,11 +5,12 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\UserRepository")
  */
-class User {
+class User implements UserInterface {
 	/**
 	 * @ORM\Id()
 	 * @ORM\GeneratedValue()
@@ -36,6 +37,21 @@ class User {
 	 * @ORM\OneToMany(targetEntity="App\Entity\License", mappedBy="user", orphanRemoval=true)
 	 */
 	private $licenses;
+
+	/**
+	 * @ORM\Column(type="json")
+	 */
+	private $roles = [];
+
+	/**
+	 * @ORM\Column(type="string", length=150)
+	 */
+	private $email;
+
+	/**
+	 * @ORM\Column(type="string", length=255)
+	 */
+	private $token;
 
 	public function __construct() {
 		$this->licenses = new ArrayCollection();
@@ -99,6 +115,56 @@ class User {
 				$license->setUser( null );
 			}
 		}
+
+		return $this;
+	}
+
+	public function getRoles() {
+		$roles = $this->roles;
+		// guarantee every user at least has ROLE_USER
+		$roles[] = 'ROLE_USER';
+
+		return array_unique( $roles );
+	}
+
+	public function setRoles( array $roles ): self {
+		$this->roles = $roles;
+
+		return $this;
+	}
+
+	public function getPassword() {
+		return $this->token;
+	}
+
+	public function getSalt() {
+		// TODO: Implement getSalt() method.
+	}
+
+	public function getUsername() {
+		return $this->email;
+	}
+
+	public function eraseCredentials() {
+		// TODO: Implement eraseCredentials() method.
+	}
+
+	public function getEmail(): ?string {
+		return $this->email;
+	}
+
+	public function setEmail( string $email ): self {
+		$this->email = $email;
+
+		return $this;
+	}
+
+	public function getToken(): ?string {
+		return $this->token;
+	}
+
+	public function setToken( string $token ): self {
+		$this->token = $token;
 
 		return $this;
 	}
